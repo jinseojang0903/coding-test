@@ -33,8 +33,9 @@ PROGRAMMERS_LEVELS = ("lv0", "lv1", "lv2", "lv3", "lv4", "lv5", "sql")
 # 백준 티어: bronze5 ~ ruby1, 티어가 없는 문제는 unrated
 BAEKJOON_TIER = re.compile(r"^(?:(?:bronze|silver|gold|platinum|diamond|ruby)[1-5]|unrated)$")
 
-# 윈도우·맥에서 파일 이름에 쓸 수 없는 문자
-INVALID_FILENAME_CHARS = re.compile(r'[\\/:*?"<>|]')
+# 윈도우·맥에서 파일 이름에 쓸 수 없는 문자. [ ] 는 쓸 수는 있지만
+# git·셸에서 패턴 문자로 해석되므로 같이 뺀다 (예: "[1차] 캐시" → "1차_캐시").
+INVALID_FILENAME_CHARS = re.compile(r'[\\/:*?"<>|\[\]]')
 
 
 class UserInputError(Exception):
