@@ -9,13 +9,17 @@
 ## 학습 루틴
 
 인턴과 병행하고 있어서 평일에는 적게, 주말에는 실전과 복기에 시간을 씁니다.
+평일은 **워밍업 1문제 + 같은 유형의 본 문제 1문제**를 풉니다. 풀 문제는 [`plan/`](plan/)에 순서대로 정해 두었습니다.
 
-| 요일 | 할 일 | 분량 | 기록 위치 |
+| 요일 | 할 일 | 분량 | 계획 |
 |---|---|---|---|
-| 월 · 수 · 금 | 알고리즘 (프로그래머스 위주, 백준 보조) | 1문제 이상 | `programmers/lv*/`, `baekjoon/` |
-| 화 · 목 | SQL | 1문제 이상 | `programmers/sql/` |
-| 토 | 실전 모의 (시간 제한을 두고 3문제) | 3문제 | `mock-tests/` + 문제별 풀이 파일 |
-| 일 | 복기 (오답 노트 복습, 틀린 문제 다시 풀기) | 이번 주 오답 | `notes/` |
+| 월 · 수 · 금 | 알고리즘 (고득점 Kit 유형 순서) | 워밍업 + 본 문제 | [`plan/algorithm.md`](plan/algorithm.md) |
+| 화 · 목 | SQL (SQL 고득점 Kit) | 워밍업 + 본 문제 | [`plan/sql.md`](plan/sql.md) |
+| 토 | 실전 모의 (기업 기출 3문제, 120분) | 3문제 | [`plan/mock.md`](plan/mock.md) |
+| 일 | 복기 (복습일이 된 오답 노트 다시 풀기) | 이번 주 오답 | `notes/` |
+
+- 바쁜 날은 워밍업만 풉니다. 본 문제는 다음 날 이어서 풉니다.
+- 본 문제는 40분 안에 못 풀면 풀이를 보고 오답 노트를 남깁니다.
 
 ## 진행 현황
 
@@ -69,11 +73,37 @@ coding-test/
 ├─ baekjoon/
 ├─ mock-tests/            # 토요일 실전 모의 기록 (날짜.md)
 ├─ notes/                 # 오답 노트 (유형별 md)
+├─ plan/                  # 풀 문제 순서 (알고리즘 · SQL · 실전 모의)
 ├─ templates/             # 풀이·노트·모의 템플릿
-└─ scripts/               # new.py, update_readme.py
+└─ scripts/               # today.py, new.py, update_readme.py
 ```
 
 파일 이름은 `{문제번호}_{문제이름}.py` (SQL 은 `.sql`) 이고, 문제 이름의 공백은 `_` 로 바뀝니다.
+`[1차]` 같은 대괄호와 `/` 는 파일 이름에서 빠집니다.
+
+### 0. 오늘 풀 문제 확인
+
+```bash
+python scripts/today.py
+```
+
+요일에 맞는 계획에서 아직 안 푼 첫 문제들을 보여 주고, 바로 쓸 수 있는 `new.py` 명령을 출력합니다.
+`programmers/` 에 같은 번호의 파일이 있으면 푼 것으로 봅니다. 따로 체크할 필요가 없습니다.
+
+```
+2026-11-04 (수) · 오늘은 알고리즘
+
+[알고리즘] 1일차 · 해시  (완료 0/35일차)
+  워밍업: 1845 폰켓몬 (lv1)
+    https://school.programmers.co.kr/learn/courses/30/lessons/1845
+    python scripts/new.py programmers lv1 1845 "폰켓몬" --type "해시"
+  본 문제: 42577 전화번호 목록 (lv2)
+    ...
+```
+
+- 요일과 다른 계획을 보려면 `--mode algorithm|sql|mock|review` 를 붙입니다. 예: 토요일에 SQL 을 더 풀고 싶을 때 `--mode sql`.
+- 일요일에는 복습일이 된 오답 노트와, 한 번에 못 풀었는데 오답 노트가 없는 이번 주 문제를 보여 줍니다.
+- 순서를 바꾸거나 문제를 더하려면 `plan/*.md` 의 표를 직접 고칩니다.
 
 ### 1. 새 문제 만들기
 
@@ -120,22 +150,24 @@ python scripts/new.py mock
 ```
 
 `mock-tests/오늘날짜.md` 가 생깁니다. 모의에서 푼 문제는 1번처럼 따로 만들어 문제별로 커밋하고, 모의 기록은 마지막에 `[mock]` 으로 커밋합니다.
+실전처럼 유형을 모르고 풀도록 모의 문제에는 `--type` 이 없습니다. 풀고 나서 헤더에 유형을 적습니다.
 
 ### 매일 하는 흐름
 
 ```bash
-# 1) 문제 파일 만들기
-python scripts/new.py programmers lv2 42586 기능개발 --type 스택큐
+# 1) 오늘 풀 문제 확인
+python scripts/today.py
 
-# 2) 풀고 헤더 채우기 (소요 시간, 한 번에 성공, 핵심 아이디어, 시간복잡도)
+# 2) 출력된 명령으로 워밍업 문제 파일 만들기 → 풀고 헤더 채우기
+python scripts/new.py programmers lv1 1845 "폰켓몬" --type "해시"
 
-# 3) 통계 갱신
+# 3) 통계 갱신 후 커밋·푸시 (new.py 가 출력해 준 명령을 그대로 써도 됩니다)
 python scripts/update_readme.py
-
-# 4) 커밋·푸시 (new.py 가 출력해 준 명령을 그대로 써도 됩니다)
-git add programmers/lv2/42586_기능개발.py README.md
-git commit -m "[programmers lv2] 42586 기능개발 (스택큐)"
+git add programmers/lv1/1845_폰켓몬.py README.md
+git commit -m "[programmers lv1] 1845 폰켓몬 (해시)"
 git push
+
+# 4) 본 문제도 2~3번을 똑같이 반복 (문제 하나당 커밋 하나)
 ```
 
 ### 한글 파일 이름 팁
